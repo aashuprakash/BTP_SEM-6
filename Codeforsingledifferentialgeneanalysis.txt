@@ -1,0 +1,116 @@
+# Load required packages
+install.packages("umap")
+
+library(Biobase)
+library(GEOquery)
+library(limma)
+library(umap)
+
+# Load series and platform data from GEO
+gset <- getGEO("GSE42955", GSEMatrix = TRUE, AnnotGPL = TRUE)
+if (length(gset) > 1) idx <- grep("GPL6244", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# Make proper column names to match toptable 
+featureNames(gset) <- make.names(featureNames(gset))
+
+# Group membership for all samples
+gsms <- "00000000100000010000000001111"
+sml <- strsplit(gsms, split="")[[1]]
+
+# Log2 transformation
+ex <- exprs(gset)
+qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm = TRUE))
+LogC <- (qx[5] > 100) || (qx[6] - qx[1] > 50 && qx[2] > 0)
+if (LogC) { 
+  ex[which(ex <= 0)] <- NaN
+  ex <- log2(ex)
+}
+
+# Assign samples to groups and set up design matrix
+gs <- factor(sml)
+groups <- make.names(c("case", "control"))
+levels(gs) <- groups
+gset$group <- gs
+design <- model.matrix(~group + 0, gset)
+colnames(design) <- levels(gs)
+
+gset <- gset[complete.cases(ex), ] # Skip missing values
+
+# Fit linear model
+fit <- lmFit(gset, design)
+
+# Set up contrasts of interest and recalculate model coefficients
+cts <- c(paste(groups[1], "-", groups[2], sep = ""))
+cont.matrix <- makeContrasts(contrasts = cts, levels = design)
+fit2 <- contrasts.fit(fit, cont.matrix)
+
+# Compute statistics and table of top significant genes
+
+# getting error for this ******
+
+fit2 <- eBayes(fit2, 0.01)
+tT <- topTable(fit2, adjust = "fdr", sort.by = "B", number = 250)
+
+tT <- subset(tT, select = c("ID", "adj.P.Val", "P.Value", "t", "B", "logFC", "GB_LIST", "SPOT_ID", "RANGE_GB", "RANGE_STRAND", "RANGE_START", "Gene.symbol", "Gene.title"))
+write.table(tT, file = stdout(), row.names = FALSE, sep = "\t")
+
+
+# getting error for this ******
+
+# Visualize and quality control test results
+# Build histogram of P-values for all genes. Normal test
+# assumption is that most genes are not differentially expressed.
+tT2 <- topTable(fit2, adjust = "fdr", sort.by = "B", number = Inf)
+hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
+     ylab = "Number of genes", main = "P-adj value distribution")
+
+# Summarize test results as "up", "down" or "not expressed"
+dT <- decideTests(fit2, adjust.method = "fdr", p.value = 0.05, lfc = 0)
+
+# Venn diagram of results
+vennDiagram(dT, circle.col = palette())
+
+# Create Q-Q plot for t-statistic
+t.good <- which(!is.na(fit2$F)) # Filter out bad probes
+qqt(fit2$t[t.good], fit2$df.total[t.good], main = "Moderated t statistic")
+
+# Volcano plot (log P-value vs log fold change)
+colnames(fit2) # List contrast names
+ct <- 1        # Choose contrast of interest
+#volcanoplot(fit2, coef = ct, main = colnames(fit2)[ct], pch = 20,
+         #   highlight = length(which(dT[, ct] != 0)), names = rep('+', nrow(fit2)))
+
+# Specify the margins of the plot using the `mar` parameter
+# Open a new plotting device with larger size
+dev.new(width = 10, height = 7)
+
+# Plot the volcano plot with adjusted margins
+volcanoplot(fit2, coef = ct, main = colnames(fit2)[ct], pch = 20,
+            highlight = length(which(dT[, ct] != 0)), names = rep('+', nrow(fit2)),
+            mar = c(5, 5, 2, 1))
+
+
+
+
+# MD plot (log fold change vs mean log expression)
+# Highlight statistically significant (p-adj < 0.05) probes
+plotMD(fit2, column = ct, status = dT[, ct], legend = FALSE, pch = 20, cex = 1)
+abline(h = 0)
+
+# General expression data analysis
+ex <- exprs(gset)
+
+# Box-and-whisker plot
+ord <- order(gs)  # Order samples by group
+palette(c("#1B9E77", "#7570B3", "#E7298A", "#E6AB02", "#D95F02",
+          "#66A61E", "#A6761D", "#B32424", "#B324B3", "#666666"))
+par(mar = c(7, 4, 2, 1))
+title <- paste("GSE42955", "/", annotation(gset), sep = "")
+boxplot(ex[, ord], boxwex = 0.6, notch = TRUE, main = title, outline = FALSE, las = 2, col = gs[ord])
+legend("topleft", groups, fill = palette(), bty = "n")
+
+# Expression value distribution
+par(mar = c(4, 4, 2, 1))
+title <- paste("GSE42955", "/", annotation(gset), " value distribution", sep = "")
+plotDensities(ex, group = gs, main = title, legend = "topright")
