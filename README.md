@@ -7,3 +7,6 @@ mid sems
 08/03 Online meet with ma'am
 09/03 offline meet wiht both PHD change of work flow again first generating of the count from raw data and various processes and DGA planing and working on FASTQC and matching of the genes and pathways shared.
 error we encountered of java instalation for Fastqc on server root acess denied sudo .
+
+
+ #https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE225605 #Paired_ayush contains the paired and unpaired FASTQ files of the paired file.
