@@ -10,3 +10,16 @@ error we encountered of java instalation for Fastqc on server root acess denied 
 
 
  #https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE225605 #Paired_ayush contains the paired and unpaired FASTQ files of the paired file.
+
+
+After assigning of PHD we are in regular touch with the Co author and working in RND on daily basis in cordination with her.
+
+
+we faced problems in between 
+-
+downloading things 
+changing things 
+introduction of new things in between GTF files , etc.
+Now upon trying a lot many times of the o outcome on files mainly on trimming .
+Non availability of the SRA accesion id's.
+We tried every possible method as discussed with ma'am and we find that the dataset has some error due which we are not getting desired results.
