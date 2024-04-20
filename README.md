@@ -1,7 +1,7 @@
 # BTP_SEM-6
--
 
-Developing statistical model for defining biogenesis and degradation pathway using gene variability and mutations.
+
+-Developing statistical model for defining biogenesis and degradation pathway using gene variability and mutations.
 --
 htseq
 -
