@@ -1,5 +1,30 @@
 # BTP_SEM-6
-CVD
+-
+*
+Developing statistical model for defining biogenesis and degradation pathway using gene variability and mutations.
+--
+-
+hyseq
+output_Aligned.out.sorted.bam: Path to the input BAM file containing aligned reads.
+
+/scratch-cb/ayush21456/FASTQ_Downloads/Trimmomatic-0.39/Trimmed-files-paired/genome2/Homo_sapiens.GRCh38.104.gtf: Path to the GTF file containing genome annotation.
+> output_count_matri-SRR23529084Alignedx.txt: Redirects the output (read counts for each gene) to a file named output_count_matrix-SRR23529084Alignedx.txt.
+-
+> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 previous meets on 13/01 reading of the thesis paper and getting an idea about it , 26 / 01 furhter finding of datasets randomly on genes of thesis paper ,9/02 follow up 16/02 again follow up
 omkar bhaiya meet on 23/02 discussed about Single Cell RNA Seq Datasets and then performing DGA.
 mid sems
@@ -23,3 +48,10 @@ introduction of new things in between GTF files , etc.
 Now upon trying a lot many times of the o outcome on files mainly on trimming .
 Non availability of the SRA accesion id's.
 We tried every possible method as discussed with ma'am and we find that the dataset has some error due which we are not getting desired results.
+
+
+
+
+
+
+
