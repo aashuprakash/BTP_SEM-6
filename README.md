@@ -1,10 +1,10 @@
 # BTP_SEM-6
 -
-*
+
 Developing statistical model for defining biogenesis and degradation pathway using gene variability and mutations.
 --
+htseq
 -
-hyseq
 output_Aligned.out.sorted.bam: Path to the input BAM file containing aligned reads.
 
 /scratch-cb/ayush21456/FASTQ_Downloads/Trimmomatic-0.39/Trimmed-files-paired/genome2/Homo_sapiens.GRCh38.104.gtf: Path to the GTF file containing genome annotation.
